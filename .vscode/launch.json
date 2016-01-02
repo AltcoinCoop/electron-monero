@@ -1,0 +1,12 @@
+{
+  "version": "",
+  "configurations": [
+    {
+      "name": "Launch",
+      "type": "node",
+      "request": "launch",
+      "program": "main.js",
+      "runtimeExecutable": "node_modules/electron-prebuilt/dist/electron.exe"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "valid-jsdoc": [1, {
+      "prefer": {
+        "return": "returns"
+      },
+      "requireReturn": false,
+      "requireParamDescription": false,
+      "requireReturnDescription": false
+    }]
+  }
+}
