@@ -18,5 +18,8 @@ export default class DaemonManager extends ProcessManagerBase {
       NetworkSettings.rpcDaemonPort,
       extraArgs
     );
+
+    // Start the process
+    this.start();
   }
 }

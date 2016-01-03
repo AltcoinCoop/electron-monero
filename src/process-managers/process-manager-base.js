@@ -40,10 +40,67 @@ export default class ProcessManagerBase extends EventEmitter {
     this.executablePath = executablePath;
     this.rpcIp = rpcIp;
     this.rpcPort = rpcPort;
-    this.extraArgs = extraArgs;
+
+    if (extraArgs != null) {
+      this.extraArgs = extraArgs;
+    }
+  }
+
+  /**
+   * Starts the process.
+   */
+  start() {
+    // Start the process
+    let process = spawn(this.executablePath, this.argsArray);
+    this._process = process;
+
+    // Attach event handlers to the process
+    process.stdout.on('data', (data) => {
+      this.emit('data', data.toString(), false);
+    });
+    process.stderr.on('data', (data) => {
+      this.emit('data', data.toString(), true);
+    });
+    process.on('close', (code) => {
+      this.emit('close', code);
+    });
+  }
+
+  /**
+   * Stops the process.
+   */
+  stop() {
+    if (this._process == null) return;
+
+    this._process.kill();
+    this._process = null;
+  }
+
+  /**
+   * Restarts the process.
+   */
+  restart() {
+    this.stop();
+    this.start();
+  }
+
+  /**
+   * Writes a message to the stdin stream of the process.
+   * @param {string} msg Message to be written 
+   */
+  writeLine(msg) {
+    this._process.stdin.write(msg + '\n');
+  }
+
+  /**
+   * Array of arguments passed to the process.
+   */
+  get argsArray() {
+    let rpcIp = this.rpcIp;
+    let rpcPort = this.rpcPort;
 
     // Initialize the Map of arguments
-    let argsMap = new Map(extraArgs);
+    let argsMap = new Map(this.extraArgs);
     if (rpcIp != null && rpcPort != null) {
       argsMap.set('rpc-bind-ip', rpcIp);
       argsMap.set('rpc-bind-port', rpcPort);
@@ -51,23 +108,9 @@ export default class ProcessManagerBase extends EventEmitter {
 
     // Convert 'argsMap' to string[]
     let argsArray = [];
-    for (let [key, value] of extraArgs) {
+    for (let [key, value] of argsMap) {
       argsArray.push(`--${key}=${value}`);
     }
-
-    // Start the process
-    let process = spawn(executablePath, argsArray);
-    this._process = process;
-
-    // Attach event handlers to the process
-    process.stdout.on('data', (data) => {
-      this.emit('data', data, false);
-    });
-    process.stderr.on('data', (data) => {
-      this.emit('data', data, true);
-    });
-    process.on('close', (code) => {
-      this.emit('close', code);
-    });
+    return argsArray;
   }
 }

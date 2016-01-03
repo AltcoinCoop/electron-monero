@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.3.14",
+    "mkdirp": "^0.5.1",
     "node-localstorage": "^0.6.0",
     "tar": "^2.2.1",
     "unzip": "^0.1.11"
