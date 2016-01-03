@@ -1,17 +1,21 @@
 import { spawn } from 'child_process';
 import { app, BrowserWindow } from 'electron';
+import OS_TYPE from './enums/os-type';
+import DaemonManager from './process-managers/daemon-manager';
+import WalletManager from './process-managers/wallet-manager';
 import { NetworkSettings, PathSettings } from './settings';
+import Utils from './utils';
 
 // Declare important variables in an outer scope to avoid GC
 let mainWindow;
-let daemonProcess;
-let walletProcess;
+let daemonManager;
+let walletManager;
 
 // Quit when all windows are closed
 app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar to stay active
   // until the user quits explicitly with Cmd + Q
-  if (process.platform === 'darwin') return;
+  if (Utils.currentOsType === OS_TYPE.MAC) return;
 
   app.quit();
 });
@@ -35,38 +39,6 @@ app.on('ready', () => {
   // Open DevTools
   mainWindow.webContents.openDevTools();
 
-  daemonProcess = spawn(PathSettings.softwareDaemon, [
-    `--rpc-bind-ip=${NetworkSettings.rpcDaemonIp}`,
-    `--rpc-bind-port=${NetworkSettings.rpcDaemonPort}`,
-    `--data-dir=${PathSettings.directoryDaemonData}`
-  ]);
-
-  daemonProcess.stdout.on('data', (data) => {
-    console.log('DAEMON OUT: ' + data);
-  });
-  daemonProcess.stderr.on('data', (data) => {
-    console.log('DAEMON ERR: ' + data);
-  });
-  daemonProcess.on('close', (code) => {
-    console.log('DAEMON EXIT: ' + code);
-  });
-
-  walletProcess = spawn(PathSettings.softwareWallet, [
-    `--rpc-bind-ip=${NetworkSettings.rpcWalletIp}`,
-    `--rpc-bind-port=${NetworkSettings.rpcWalletPort}`,
-    `--daemon-host=${NetworkSettings.rpcDaemonIp}`,
-    `--daemon-port=${NetworkSettings.rpcDaemonPort}`,
-    `--wallet-file=${PathSettings.fileWalletData}`,
-    `--password=x`
-  ]);
-
-  walletProcess.stdout.on('data', (data) => {
-    console.log('WALLET OUT: ' + data);
-  });
-  walletProcess.stderr.on('data', (data) => {
-    console.log('WALLET ERR: ' + data);
-  });
-  walletProcess.on('close', (code) => {
-    console.log('WALLET EXIT: ' + code);
-  });
+  daemonManager = new DaemonManager();
+  walletManager = new WalletManager('x');
 });
