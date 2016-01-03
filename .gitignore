@@ -1,6 +1,8 @@
 # Project-specific
 ## Generated resources
 src/cli/
+src/log/
+src/settings/
 lib/
 coverage/
 docs/

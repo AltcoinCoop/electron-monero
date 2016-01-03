@@ -37,13 +37,13 @@ export class PathSettings {
     return localStorage.setItem('paths_directoryDaemonData', value);
   }
 
-  static get fileAccountData() {
-    return localStorage.getItem('paths_fileAccountData') ||
-      path.join(os.homedir(), 'Monero Accounts/account.bin');
+  static get fileWalletData() {
+    return localStorage.getItem('paths_fileWalletData') ||
+      path.join(os.homedir(), 'Monero Wallets/main.wallet');
   }
 
-  static set fileAccountData(value) {
-    return PathSettings.table.set('paths_fileAccountData', value);
+  static set fileWalletData(value) {
+    return PathSettings.table.set('paths_fileWalletData', value);
   }
 
   static get softwareDaemon() {
@@ -56,14 +56,14 @@ export class PathSettings {
     return localStorage.setItem('paths_softwareDaemon', value);
   }
 
-  static get softwareAccountManager() {
+  static get softwareWallet() {
     // Each OS has different defaults
-    return localStorage.getItem('paths_softwareAccountManager') ||
+    return localStorage.getItem('paths_softwareWallet') ||
       './cli/simplewallet' + Utils.executableFileExtension;
   }
 
-  static set softwareAccountManager(value) {
-    return localStorage.setItem('paths_softwareAccountManager', value);
+  static set softwareWallet(value) {
+    return localStorage.setItem('paths_softwareWallet', value);
   }
 }
 
@@ -84,19 +84,19 @@ export class NetworkSettings {
     return localStorage.setItem('network_rpcDaemonPort', value);
   }
 
-  static get rpcAccountManagerIp() {
-    return localStorage.getItem('network_rpcAccountManagerIp') || LOCALHOST_IP;
+  static get rpcWalletIp() {
+    return localStorage.getItem('network_rpcWalletIp') || LOCALHOST_IP;
   }
 
-  static set rpcAccountManagerIp(value) {
-    return localStorage.setItem('network_rpcAccountManagerIp', value);
+  static set rpcWalletIp(value) {
+    return localStorage.setItem('network_rpcWalletIp', value);
   }
 
-  static get rpcAccountManagerPort() {
-    return localStorage.getItem('network_rpcAccountManagerPort') || 18082;
+  static get rpcWalletPort() {
+    return localStorage.getItem('network_rpcWalletPort') || 18082;
   }
 
-  static set rpcAccountManagerPort(value) {
-    return localStorage.setItem('network_rpcAccountManagerPort', value);
+  static set rpcWalletPort(value) {
+    return localStorage.setItem('network_rpcWalletPort', value);
   }
 }

@@ -4,7 +4,7 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "cd ./src && electron ./..",
     "compile": "rimraf ./lib && mkdir lib && ncp ./src ./lib && babel ./src -d ./lib",
     "pack": "npm run compile && electron-packager ./ electron-monero --platform=all --arch=all --version=0.36.2 --out=./build --ignore=./build --prune"
   },

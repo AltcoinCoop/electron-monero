@@ -35,23 +35,38 @@ app.on('ready', () => {
   // Open DevTools
   mainWindow.webContents.openDevTools();
 
-  PathSettings.directoryDaemonData = 'D:/Cryptocurrency data/Blockchains/Monero';
-
   daemonProcess = spawn(PathSettings.softwareDaemon, [
-    `--data-dir=${PathSettings.directoryDaemonData}`,
     `--rpc-bind-ip=${NetworkSettings.rpcDaemonIp}`,
-    `--rpc-bind-port=${NetworkSettings.rpcDaemonPort}`
-  ], {
-    cwd: __dirname
-  });
+    `--rpc-bind-port=${NetworkSettings.rpcDaemonPort}`,
+    `--data-dir=${PathSettings.directoryDaemonData}`
+  ]);
 
   daemonProcess.stdout.on('data', (data) => {
-    console.log('stdout: ' + data);
+    console.log('DAEMON OUT: ' + data);
   });
   daemonProcess.stderr.on('data', (data) => {
-    console.log('stdout: ' + data);
+    console.log('DAEMON ERR: ' + data);
   });
   daemonProcess.on('close', (code) => {
-    console.log('closing code: ' + code);
+    console.log('DAEMON EXIT: ' + code);
+  });
+
+  walletProcess = spawn(PathSettings.softwareWallet, [
+    `--rpc-bind-ip=${NetworkSettings.rpcWalletIp}`,
+    `--rpc-bind-port=${NetworkSettings.rpcWalletPort}`,
+    `--daemon-host=${NetworkSettings.rpcDaemonIp}`,
+    `--daemon-port=${NetworkSettings.rpcDaemonPort}`,
+    `--wallet-file=${PathSettings.fileWalletData}`,
+    `--password=x`
+  ]);
+
+  walletProcess.stdout.on('data', (data) => {
+    console.log('WALLET OUT: ' + data);
+  });
+  walletProcess.stderr.on('data', (data) => {
+    console.log('WALLET ERR: ' + data);
+  });
+  walletProcess.on('close', (code) => {
+    console.log('WALLET EXIT: ' + code);
   });
 });

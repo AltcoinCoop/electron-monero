@@ -6,6 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "main.js",
+      "cwd": "./src",
       "runtimeExecutable": "node_modules/electron-prebuilt/dist/electron.exe"
     }
   ]
