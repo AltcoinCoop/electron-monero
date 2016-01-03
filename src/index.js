@@ -1,15 +1,13 @@
-import { spawn } from 'child_process';
 import { app, BrowserWindow } from 'electron';
 import OS_TYPE from './enums/os-type';
-import DaemonManager from './process-managers/daemon-manager';
-import WalletManager from './process-managers/wallet-manager';
-import { NetworkSettings, PathSettings } from './settings';
+import DaemonProcess from './processes/daemon-process';
+import WalletProcess from './processes/wallet-process';
 import Utils from './utils';
 
 // Declare important variables in an outer scope to avoid GC
 let mainWindow;
-let daemonManager;
-let walletManager;
+let daemonProcess;
+let walletProcess;
 
 // Quit when all windows are closed
 app.on('window-all-closed', () => {
@@ -39,6 +37,6 @@ app.on('ready', () => {
   // Open DevTools
   mainWindow.webContents.openDevTools();
 
-  daemonManager = new DaemonManager();
-  walletManager = new WalletManager('x');
+  daemonProcess = new DaemonProcess();
+  walletProcess = new WalletProcess('x');
 });

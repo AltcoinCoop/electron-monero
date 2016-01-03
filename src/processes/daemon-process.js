@@ -5,9 +5,9 @@ import { NetworkSettings, PathSettings } from './../settings';
  * Manages the daemon process.
  * @property {string} directoryDaemonData Daemon data directory.
  */
-export default class DaemonManager extends ProcessManagerBase {
+export default class DaemonProcess extends ProcessManagerBase {
   /**
-   * Creates a new DaemonManager instance.
+   * Creates a new DaemonProcess instance.
    * @param {string} directoryDaemonData Daemon data directory.
    */
   constructor(directoryDaemonData = PathSettings.directoryDaemonData) {

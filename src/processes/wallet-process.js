@@ -8,9 +8,9 @@ import { NetworkSettings, PathSettings } from './../settings';
  * Manages the wallet process.
  * @property {string} fileWalletData Wallet data file.
  */
-export default class WalletManager extends ProcessManagerBase {
+export default class WalletProcess extends ProcessManagerBase {
   /**
-   * Creates a new WalletManager instance.
+   * Creates a new WalletProcess instance.
    * @param {string} password Password to be used for the wallet.
    * @param {string} fileWalletData Wallet data file.
    */
