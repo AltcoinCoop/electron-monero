@@ -6,16 +6,19 @@ import { NetworkSettings, PathSettings } from './../settings';
 
 /**
  * Manages the wallet process.
+ * @property {string} fileWalletData Wallet data file.
  */
 export default class WalletManager extends ProcessManagerBase {
   /**
    * Creates a new WalletManager instance.
    * @param {string} password Password to be used for the wallet.
+   * @param {string} fileWalletData Wallet data file.
    */
-  constructor(password) {
+  constructor(password, fileWalletData = PathSettings.fileWalletData) {
     super(PathSettings.softwareWallet);
 
     this._password = password;
+    this.fileWalletData = fileWalletData;
 
     // Start the process
     this.start();
@@ -44,7 +47,7 @@ export default class WalletManager extends ProcessManagerBase {
   get isWalletDataExistent() {
     try {
       // Check whether the wallet data file already exists
-      fs.accessSync(PathSettings.fileWalletData);
+      fs.accessSync(this.fileWalletData);
       return true;
 
     } catch (err) {
@@ -58,14 +61,14 @@ export default class WalletManager extends ProcessManagerBase {
 
     if (this.isWalletDataExistent) {
       // The wallet data file already exists
-      extraArgs.set('wallet-file', PathSettings.fileWalletData);
+      extraArgs.set('wallet-file', this.fileWalletData);
       extraArgs.set('daemon-host', NetworkSettings.rpcDaemonIp);
       extraArgs.set('daemon-port', NetworkSettings.rpcDaemonPort);
 
     } else {
       // Create a new wallet
-      mkdirp.sync(path.dirname(PathSettings.fileWalletData));
-      extraArgs.set('generate-new-wallet', PathSettings.fileWalletData);
+      mkdirp.sync(path.dirname(this.fileWalletData));
+      extraArgs.set('generate-new-wallet', this.fileWalletData);
     }
 
     return extraArgs;
