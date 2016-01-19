@@ -1,8 +1,12 @@
-import { app, BrowserWindow } from 'electron';
-import OS_TYPE from './enums/os-type';
-import DaemonProcess from './processes/daemon-process';
-import WalletProcess from './processes/wallet-process';
-import Utils from './utils';
+'use strict';
+
+const electron = require('electron');
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const OS_TYPE = require('./enums/os-type');
+const DaemonProcess = require('./processes/daemon-process');
+const WalletProcess = require('./processes/wallet-process');
+const Utils = require('./utils');
 
 // Declare important variables in an outer scope to avoid GC
 let mainWindow;

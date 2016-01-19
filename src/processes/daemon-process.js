@@ -1,16 +1,23 @@
-import ProcessManagerBase from './process-manager-base';
-import { NetworkSettings, PathSettings } from './../settings';
+'use strict';
+
+const ProcessManagerBase = require('./process-manager-base');
+const Settings = require('./../settings');
+const NetworkSettings = Settings.NetworkSettings;
+const PathSettings = Settings.PathSettings;
 
 /**
  * Manages the daemon process.
  * @property {string} directoryDaemonData Daemon data directory.
  */
-export default class DaemonProcess extends ProcessManagerBase {
+class DaemonProcess extends ProcessManagerBase {
   /**
    * Creates a new DaemonProcess instance.
    * @param {string} directoryDaemonData Daemon data directory.
    */
-  constructor(directoryDaemonData = PathSettings.directoryDaemonData) {
+  constructor(directoryDaemonData) {
+    directoryDaemonData =
+      directoryDaemonData || PathSettings.directoryDaemonData;
+
     let extraArgs = new Map();
     extraArgs.set('data-dir', directoryDaemonData);
 
@@ -27,3 +34,5 @@ export default class DaemonProcess extends ProcessManagerBase {
     this.start();
   }
 }
+
+module.exports = DaemonProcess;

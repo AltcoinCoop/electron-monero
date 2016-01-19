@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Represents an operating system type.
  * @enum {number}
@@ -19,4 +21,4 @@ const OS_TYPE = {
   WINDOWS: 3
 };
 
-export default OS_TYPE;
+module.exports = OS_TYPE;

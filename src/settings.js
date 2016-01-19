@@ -1,15 +1,16 @@
-import { LocalStorage } from 'node-localstorage';
-import os from 'os';
-import path from 'path';
-import OS_TYPE from './enums/os-type';
-import Utils from './utils';
+'use strict';
+
+const LocalStorage = require('node-localstorage').LocalStorage;
+const os = require('os');
+const path = require('path');
+const OS_TYPE = require('./enums/os-type');
+const Utils = require('./utils');
 
 const LOCALHOST_IP = '127.0.0.1';
 
 let localStorage = new LocalStorage('./settings');
-//const DB = low('db.json', { storage });
 
-export class GeneralSettings {
+class GeneralSettings {
   static get transactionMixCount() {
     return localStorage.getItem('general_transactionMixCount') || 3;
   }
@@ -19,7 +20,7 @@ export class GeneralSettings {
   }
 }
 
-export class PathSettings {
+class PathSettings {
   static get directoryDaemonData() {
     let output = localStorage.getItem('paths_directoryDaemonData');
     if (output != null) return output;
@@ -67,7 +68,7 @@ export class PathSettings {
   }
 }
 
-export class NetworkSettings {
+class NetworkSettings {
   static get rpcDaemonIp() {
     return localStorage.getItem('network_rpcDaemonIp') || LOCALHOST_IP;
   }
@@ -100,3 +101,7 @@ export class NetworkSettings {
     return localStorage.setItem('network_rpcWalletPort', value);
   }
 }
+
+exports.GeneralSettings = GeneralSettings;
+exports.PathSettings = PathSettings;
+exports.NetworkSettings = NetworkSettings;

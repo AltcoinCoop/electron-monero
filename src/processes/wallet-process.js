@@ -1,20 +1,26 @@
-import fs from 'fs';
-import mkdirp from 'mkdirp';
-import path from 'path';
-import ProcessManagerBase from './process-manager-base';
-import { NetworkSettings, PathSettings } from './../settings';
+'use strict';
+
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+const path = require('path');
+const ProcessManagerBase = require('./process-manager-base');
+const Settings = require('./../settings');
+const NetworkSettings = Settings.NetworkSettings;
+const PathSettings = Settings.PathSettings;
 
 /**
  * Manages the wallet process.
  * @property {string} fileWalletData Wallet data file.
  */
-export default class WalletProcess extends ProcessManagerBase {
+class WalletProcess extends ProcessManagerBase {
   /**
    * Creates a new WalletProcess instance.
    * @param {string} password Password to be used for the wallet.
    * @param {string} fileWalletData Wallet data file.
    */
-  constructor(password, fileWalletData = PathSettings.fileWalletData) {
+  constructor(password, fileWalletData) {
+    fileWalletData = fileWalletData || PathSettings.fileWalletData;
+
     super(PathSettings.softwareWallet);
 
     this._password = password;
@@ -74,3 +80,5 @@ export default class WalletProcess extends ProcessManagerBase {
     return extraArgs;
   }
 }
+
+module.exports = WalletProcess;

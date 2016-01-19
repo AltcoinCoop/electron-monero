@@ -1,5 +1,7 @@
-import { spawn } from 'child_process';
-import { EventEmitter } from 'events';
+'use strict';
+
+const spawn = require('child_process').spawn;
+const EventEmitter = require('events').EventEmitter;
 
 /**
  * Data event, which fires when the process outputs information.
@@ -25,7 +27,7 @@ import { EventEmitter } from 'events';
  * @property {Map.<string, Object>} extraArgs Extra command line arguments
  * provided to the process.
  */
-export default class ProcessManagerBase extends EventEmitter {
+class ProcessManagerBase extends EventEmitter {
   /**
    * Creates a new ProcessManagerBase instance.
    * @param {string} executablePath Path of the executable process.
@@ -34,7 +36,7 @@ export default class ProcessManagerBase extends EventEmitter {
    * @param {Map.<string, Object>} extraArgs Extra command line arguments
    * provided to the process.
    */
-  constructor(executablePath, rpcIp = null, rpcPort = null, extraArgs = null) {
+  constructor(executablePath, rpcIp, rpcPort, extraArgs) {
     super();
 
     this.executablePath = executablePath;
@@ -108,9 +110,12 @@ export default class ProcessManagerBase extends EventEmitter {
 
     // Convert 'argsMap' to string[]
     let argsArray = [];
-    for (let [key, value] of argsMap) {
+    // TODO
+    /*for (let [key, value] of argsMap) {
       argsArray.push(`--${key}=${value}`);
-    }
+    }*/
     return argsArray;
   }
 }
+
+module.exports = ProcessManagerBase;
