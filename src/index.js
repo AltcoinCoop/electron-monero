@@ -3,10 +3,16 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const ipcMain = electron.ipcMain;
 const OS_TYPE = require('./enums/os-type');
 const DaemonProcess = require('./processes/daemon-process');
 const WalletProcess = require('./processes/wallet-process');
 const Utils = require('./utils');
+
+ipcMain.on('request', (event, arg) => {
+  console.log(arg);
+  event.sender.send('response', 'pong');
+});
 
 // Declare important variables in an outer scope to avoid GC
 let mainWindow;

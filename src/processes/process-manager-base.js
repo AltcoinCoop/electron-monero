@@ -110,10 +110,9 @@ class ProcessManagerBase extends EventEmitter {
 
     // Convert 'argsMap' to string[]
     let argsArray = [];
-    // TODO
-    /*for (let [key, value] of argsMap) {
+    argsMap.forEach((value, key) => {
       argsArray.push(`--${key}=${value}`);
-    }*/
+    });
     return argsArray;
   }
 }

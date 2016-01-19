@@ -4,10 +4,34 @@
     <meta charset="UTF-8">
     <title>electron-monero</title>
   </head>
+
   <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chrome <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <script>
+      'use strict';
+
+      const ipcRenderer = require('electron').ipcRenderer;
+      const moneroWallet = require('monero-nodejs');
+      const NetworkSettings = require('./settings').NetworkSettings;
+
+      let wallet = new moneroWallet({
+        host: NetworkSettings.rpcWalletIp,
+        port: NetworkSettings.rpcWalletPort
+      });
+
+      wallet.balance().then((balance) => {
+        console.log(balance);
+      });
+
+      ipcRenderer.on('response', (event, arg) => {
+        console.log(arg);
+      });
+      ipcRenderer.send('request', 'ping');
+    </script>
+
+    <h1>Destination</h1>
+
+    Address: <input type="text" name="address"><br>
+    Amount: <input type="number" name="amount"><br>
+    <button>Send</button>
   </body>
 </html>
