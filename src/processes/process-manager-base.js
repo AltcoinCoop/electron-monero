@@ -30,9 +30,9 @@ class ProcessManagerBase extends EventEmitter {
   /**
    * Creates a new ProcessManagerBase instance.
    * @param {string} executablePath Path of the executable process.
-   * @param {string} rpcIp IP address used for RPC communication.
-   * @param {number} rpcPort Port used for RPC communication.
-   * @param {Map.<string, Object>} extraArgs Extra command line arguments
+   * @param {string} [rpcIp] IP address used for RPC communication.
+   * @param {number} [rpcPort] Port used for RPC communication.
+   * @param {Map.<string, Object>} [extraArgs] Extra command line arguments
    * provided to the process.
    */
   constructor(executablePath, rpcIp, rpcPort, extraArgs) {
@@ -41,6 +41,7 @@ class ProcessManagerBase extends EventEmitter {
     this.executablePath = executablePath;
     this.rpcIp = rpcIp;
     this.rpcPort = rpcPort;
+    this.isRpcEnabled = true;
 
     if (extraArgs != null) {
       this.extraArgs = extraArgs;
@@ -97,14 +98,11 @@ class ProcessManagerBase extends EventEmitter {
    * Array of arguments passed to the process.
    */
   get argsArray() {
-    let rpcIp = this.rpcIp;
-    let rpcPort = this.rpcPort;
-
     // Initialize the Map of arguments
     let argsMap = new Map(this.extraArgs);
-    if (rpcIp != null && rpcPort != null) {
-      argsMap.set('rpc-bind-ip', rpcIp);
-      argsMap.set('rpc-bind-port', rpcPort);
+    if (this.isRpcEnabled) {
+      argsMap.set('rpc-bind-ip', this.rpcIp);
+      argsMap.set('rpc-bind-port', this.rpcPort);
     }
 
     // Convert 'argsMap' to string[]
@@ -112,6 +110,7 @@ class ProcessManagerBase extends EventEmitter {
     argsMap.forEach((value, key) => {
       argsArray.push(`--${key}=${value}`);
     });
+    console.log(argsArray);
     return argsArray;
   }
 }

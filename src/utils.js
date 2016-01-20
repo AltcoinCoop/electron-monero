@@ -4,6 +4,13 @@ const os = require('os');
 const OS_TYPE = require('./enums/os-type');
 
 class Utils {
+  static get isDebug() {
+    if (this._isDebug != null) return this._isDebug;
+
+    let env = process.env.NODE_ENV || 'development';
+    return this._isDebug = env === 'development';
+  }
+
   static get currentOsType() {
     if (Utils._currentOsType != null) return Utils._currentOsType;
 

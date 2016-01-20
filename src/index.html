@@ -10,17 +10,6 @@
       'use strict';
 
       const ipcRenderer = require('electron').ipcRenderer;
-      const moneroWallet = require('monero-nodejs');
-      const NetworkSettings = require('./settings').NetworkSettings;
-
-      let wallet = new moneroWallet({
-        host: NetworkSettings.rpcWalletIp,
-        port: NetworkSettings.rpcWalletPort
-      });
-
-      wallet.balance().then((balance) => {
-        console.log(balance);
-      });
 
       ipcRenderer.on('response', (event, arg) => {
         console.log(arg);

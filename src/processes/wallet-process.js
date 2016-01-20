@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const moneroWallet = require('monero-nodejs');
 const path = require('path');
 const ProcessManagerBase = require('./process-manager-base');
 const Settings = require('./../settings');
@@ -51,9 +52,12 @@ class WalletProcess extends ProcessManagerBase {
     if (this.isWalletDataExistent) {
       // Wait for the RPC to be initialized
       this.on('data', (data) => {
-        if (!this._isInitialized && data.indexOf('Starting wallet rpc') >= 0) {
-          this._isInitialized = true;
-          this.emit('init');
+        if (!this._rpc && data.indexOf('Starting wallet rpc') >= 0) {
+          this._rpc = new moneroWallet({
+            host: this.rpcIp,
+            port: this.rpcPort
+          });
+          this._onRpcInit();
         }
       });
 
@@ -70,6 +74,22 @@ class WalletProcess extends ProcessManagerBase {
         }
       });
     }
+  }
+
+  _onRpcInit() {
+    this._queryBalance();
+  }
+
+  _queryBalance() {
+    this._rpc.balance().then((balance) => {
+      this.balance = balance;
+      this.emit('balance', balance);
+
+      setTimeout(
+        () => this._queryBalance,
+        5000
+      );
+    });
   }
 
   get isWalletDataExistent() {
@@ -89,14 +109,14 @@ class WalletProcess extends ProcessManagerBase {
 
     if (this.isWalletDataExistent) {
       // The wallet data file already exists, use RPC
+      this.isRpcEnabled = true;
       extraArgs.set('wallet-file', this.fileWalletData);
-      extraArgs.set('rpc-bind-ip', this.rpcIp);
-      extraArgs.set('rpc-bind-port', this.rpcPort);
       extraArgs.set('daemon-host', NetworkSettings.rpcDaemonIp);
       extraArgs.set('daemon-port', NetworkSettings.rpcDaemonPort);
 
     } else {
       // Create a new wallet
+      this.isRpcEnabled = false;
       mkdirp.sync(path.dirname(this.fileWalletData));
       extraArgs.set('generate-new-wallet', this.fileWalletData);
     }

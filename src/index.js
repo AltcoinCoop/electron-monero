@@ -44,9 +44,15 @@ app.on('ready', () => {
   // Load the index page of the app
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
-  // Open DevTools
-  mainWindow.webContents.openDevTools();
+  // Open DevTools in debug mode
+  if (Utils.isDebug) {
+    mainWindow.webContents.openDevTools();
+  }
 
   daemonProcess = new DaemonProcess();
-  walletProcess = new WalletProcess('x');
+  walletProcess = new WalletProcess('x'); // TODO: Query password from user
+
+  walletProcess.on('balance', (balance) => {
+    console.log(balance);
+  });
 });
