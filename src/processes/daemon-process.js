@@ -20,6 +20,7 @@ class DaemonProcess extends ProcessManagerBase {
       PathSettings.softwareDaemon,
       NetworkSettings.rpcDaemonIp,
       NetworkSettings.rpcDaemonPort,
+      'rpc server initialized',
       extraArgs
     );
 

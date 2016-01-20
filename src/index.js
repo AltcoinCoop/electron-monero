@@ -50,9 +50,12 @@ app.on('ready', () => {
   }
 
   daemonProcess = new DaemonProcess();
-  walletProcess = new WalletProcess('x'); // TODO: Query password from user
+  daemonProcess.once('rpcInit', () => {
+    // TODO: Query password from user
+    walletProcess = new WalletProcess('x');
 
-  walletProcess.on('balance', (balance) => {
-    console.log(balance);
+    walletProcess.on('balance', (balance) => {
+      console.log(balance);
+    });
   });
 });

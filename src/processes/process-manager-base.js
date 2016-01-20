@@ -32,16 +32,18 @@ class ProcessManagerBase extends EventEmitter {
    * @param {string} executablePath Path of the executable process.
    * @param {string} [rpcIp] IP address used for RPC communication.
    * @param {number} [rpcPort] Port used for RPC communication.
+   * @param {number} [rpcInitString] String received on RPC initialization.
    * @param {Map.<string, Object>} [extraArgs] Extra command line arguments
    * provided to the process.
    */
-  constructor(executablePath, rpcIp, rpcPort, extraArgs) {
+  constructor(executablePath, rpcIp, rpcPort, rpcInitString, extraArgs) {
     super();
 
     this.executablePath = executablePath;
+    this.isRpcEnabled = true;
     this.rpcIp = rpcIp;
     this.rpcPort = rpcPort;
-    this.isRpcEnabled = true;
+    this._rpcInitString = rpcInitString;
 
     if (extraArgs != null) {
       this.extraArgs = extraArgs;
@@ -66,6 +68,16 @@ class ProcessManagerBase extends EventEmitter {
     process.on('close', (code) => {
       this.emit('close', code);
     });
+
+    // Handle RPC initialization if necessary
+    if (this._rpcInitString != null) {
+      this.on('data', (data) => {
+        if (!this._isRpcInited && data.indexOf(this._rpcInitString) >= 0) {
+          this._isRpcInited = true;
+          this.emit('rpcInit');
+        }
+      });
+    }
   }
 
   /**
@@ -110,7 +122,6 @@ class ProcessManagerBase extends EventEmitter {
     argsMap.forEach((value, key) => {
       argsArray.push(`--${key}=${value}`);
     });
-    console.log(argsArray);
     return argsArray;
   }
 }

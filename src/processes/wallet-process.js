@@ -32,12 +32,10 @@ class WalletProcess extends ProcessManagerBase {
     rpcIp = rpcIp || NetworkSettings.rpcWalletIp;
     rpcPort = rpcPort || NetworkSettings.rpcWalletPort;
 
-    super(PathSettings.softwareWallet);
+    super(PathSettings.softwareWallet, rpcIp, rpcPort, 'Starting wallet rpc');
 
     this._password = password;
     this.fileWalletData = fileWalletData;
-    this.rpcIp = rpcIp;
-    this.rpcPort = rpcPort;
 
     // Start the process
     this.start();
@@ -51,15 +49,7 @@ class WalletProcess extends ProcessManagerBase {
 
     if (this.isWalletDataExistent) {
       // Wait for the RPC to be initialized
-      this.on('data', (data) => {
-        if (!this._rpc && data.indexOf('Starting wallet rpc') >= 0) {
-          this._rpc = new moneroWallet({
-            host: this.rpcIp,
-            port: this.rpcPort
-          });
-          this._onRpcInit();
-        }
-      });
+      this.once('rpcInit', () => this._onRpcInit());
 
     } else {
       // Handle wallet creation
@@ -77,6 +67,11 @@ class WalletProcess extends ProcessManagerBase {
   }
 
   _onRpcInit() {
+    this._rpc = new moneroWallet({
+      host: this.rpcIp,
+      port: this.rpcPort
+    });
+
     this._queryBalance();
   }
 
