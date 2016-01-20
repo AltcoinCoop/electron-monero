@@ -7,19 +7,14 @@ const PathSettings = Settings.PathSettings;
 
 /**
  * Manages the daemon process.
- * @property {string} directoryDaemonData Daemon data directory.
  */
 class DaemonProcess extends ProcessManagerBase {
   /**
    * Creates a new DaemonProcess instance.
-   * @param {string} directoryDaemonData Daemon data directory.
    */
-  constructor(directoryDaemonData) {
-    directoryDaemonData =
-      directoryDaemonData || PathSettings.directoryDaemonData;
-
+  constructor() {
     let extraArgs = new Map();
-    extraArgs.set('data-dir', directoryDaemonData);
+    extraArgs.set('data-dir', PathSettings.directoryDaemonData);
 
     super(
       PathSettings.softwareDaemon,
@@ -27,8 +22,6 @@ class DaemonProcess extends ProcessManagerBase {
       NetworkSettings.rpcDaemonPort,
       extraArgs
     );
-
-    this.directoryDaemonData = directoryDaemonData;
 
     // Start the process
     this.start();

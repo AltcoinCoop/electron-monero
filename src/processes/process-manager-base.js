@@ -18,7 +18,6 @@ const EventEmitter = require('events').EventEmitter;
 
 /**
  * Base class for managing child processes.
- * @extends EventEmitter
  * @fires ProcessManagerBase#data
  * @fires ProcessManagerBase#close
  * @property {string} executablePath Path of the executable process.

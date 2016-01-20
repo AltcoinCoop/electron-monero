@@ -9,22 +9,34 @@ const NetworkSettings = Settings.NetworkSettings;
 const PathSettings = Settings.PathSettings;
 
 /**
+ * Initialization event, which fires when the process gets initialized.
+ * @event WalletProcess#init
+ */
+
+/**
  * Manages the wallet process.
+ * @fires WalletProcess#init
  * @property {string} fileWalletData Wallet data file.
  */
 class WalletProcess extends ProcessManagerBase {
   /**
    * Creates a new WalletProcess instance.
    * @param {string} password Password to be used for the wallet.
-   * @param {string} fileWalletData Wallet data file.
+   * @param {string} [fileWalletData] Wallet data file.
+   * @param {string} [rpcIp] IP address used for RPC communication.
+   * @param {number} [rpcPort] Port used for RPC communication.
    */
-  constructor(password, fileWalletData) {
+  constructor(password, fileWalletData, rpcIp, rpcPort) {
     fileWalletData = fileWalletData || PathSettings.fileWalletData;
+    rpcIp = rpcIp || NetworkSettings.rpcWalletIp;
+    rpcPort = rpcPort || NetworkSettings.rpcWalletPort;
 
     super(PathSettings.softwareWallet);
 
     this._password = password;
     this.fileWalletData = fileWalletData;
+    this.rpcIp = rpcIp;
+    this.rpcPort = rpcPort;
 
     // Start the process
     this.start();
@@ -35,19 +47,29 @@ class WalletProcess extends ProcessManagerBase {
    */
   start() {
     super.start();
-    if (this.isWalletDataExistent) return;
 
-    // Handle wallet creation if necessary
-    this.on('data', (data) => {
-      if (data.indexOf('language of your choice') >= 0) {
-        // TODO: Let the user select the language of the seed
-        this.writeLine('0');
-      }
+    if (this.isWalletDataExistent) {
+      // Wait for the RPC to be initialized
+      this.on('data', (data) => {
+        if (!this._isInitialized && data.indexOf('Starting wallet rpc') >= 0) {
+          this._isInitialized = true;
+          this.emit('init');
+        }
+      });
 
-      if (data.indexOf('wallet has been generated') >= 0) {
-        this.restart();
-      }
-    });
+    } else {
+      // Handle wallet creation
+      this.on('data', (data) => {
+        if (data.indexOf('language of your choice') >= 0) {
+          // TODO: Let the user select the language of the seed
+          this.writeLine('0');
+        }
+
+        if (data.indexOf('wallet has been generated') >= 0) {
+          this.restart();
+        }
+      });
+    }
   }
 
   get isWalletDataExistent() {
@@ -66,8 +88,10 @@ class WalletProcess extends ProcessManagerBase {
     extraArgs.set('password', this._password);
 
     if (this.isWalletDataExistent) {
-      // The wallet data file already exists
+      // The wallet data file already exists, use RPC
       extraArgs.set('wallet-file', this.fileWalletData);
+      extraArgs.set('rpc-bind-ip', this.rpcIp);
+      extraArgs.set('rpc-bind-port', this.rpcPort);
       extraArgs.set('daemon-host', NetworkSettings.rpcDaemonIp);
       extraArgs.set('daemon-port', NetworkSettings.rpcDaemonPort);
 
