@@ -4,6 +4,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const moneroWallet = require('monero-nodejs');
 const path = require('path');
+const portscanner = require('portscanner');
 const ProcessManagerBase = require('./process-manager-base');
 const Settings = require('./../settings');
 const NetworkSettings = Settings.NetworkSettings;
@@ -32,7 +33,7 @@ class WalletProcess extends ProcessManagerBase {
     rpcIp = rpcIp || NetworkSettings.rpcWalletIp;
     rpcPort = rpcPort || NetworkSettings.rpcWalletPort;
 
-    super(PathSettings.softwareWallet, rpcIp, rpcPort, 'Starting wallet rpc');
+    super(PathSettings.softwareWallet, rpcIp, rpcPort);
 
     this._password = password;
     this.fileWalletData = fileWalletData;
@@ -45,11 +46,27 @@ class WalletProcess extends ProcessManagerBase {
    * Starts the process.
    */
   start() {
-    super.start();
-
     if (this.isWalletDataExistent) {
       // Wait for the RPC to be initialized
       this.once('rpcInit', () => this._onRpcInit());
+
+      // Handle RPC initialization
+      this._rpcInitTimer = setInterval(
+        () => {
+          portscanner.checkPortStatus(
+            this.rpcPort,
+            this.rpcIp,
+            (err, status) => {
+              if (status === 'open') {
+                clearInterval(this._rpcInitTimer);
+                this._isRpcInited = true;
+                this.emit('rpcInit');
+              }
+            }
+          );
+        },
+        1000
+      );
 
     } else {
       // Handle wallet creation
@@ -64,6 +81,8 @@ class WalletProcess extends ProcessManagerBase {
         }
       });
     }
+
+    super.start();
   }
 
   _onRpcInit() {
