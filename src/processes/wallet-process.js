@@ -51,22 +51,7 @@ class WalletProcess extends ProcessManagerBase {
       this.once('rpcInit', () => this._onRpcInit());
 
       // Handle RPC initialization
-      this._rpcInitTimer = setInterval(
-        () => {
-          portscanner.checkPortStatus(
-            this.rpcPort,
-            this.rpcIp,
-            (err, status) => {
-              if (status === 'open') {
-                clearInterval(this._rpcInitTimer);
-                this._isRpcInited = true;
-                this.emit('rpcInit');
-              }
-            }
-          );
-        },
-        1000
-      );
+      this._queryRpcStatus();
 
     } else {
       // Handle wallet creation
@@ -94,15 +79,24 @@ class WalletProcess extends ProcessManagerBase {
     this._queryBalance();
   }
 
+  _queryRpcStatus() {
+    portscanner.checkPortStatus(this.rpcPort, this.rpcIp, (err, status) => {
+      if (status === 'open') {
+        this._isRpcInited = true;
+        this.emit('rpcInit');
+        return;
+      }
+
+      setTimeout(() => this._queryRpcStatus(), 3000);
+    });
+  }
+
   _queryBalance() {
     this._rpc.balance().then((balance) => {
       this.balance = balance;
       this.emit('balance', balance);
 
-      setTimeout(
-        () => this._queryBalance,
-        5000
-      );
+      setTimeout(() => this._queryBalance(), 5000);
     });
   }
 

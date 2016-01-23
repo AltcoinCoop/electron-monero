@@ -58,12 +58,6 @@ class ProcessManagerBase extends EventEmitter {
     let process = spawn(this.executablePath, this.argsArray);
     this._process = process;
 
-    // Refresh console output automatically
-    /*this._consoleRefreshTimer = setInterval(
-      () => this.writeLine(),
-      1000
-    );*/
-
     // Attach event handlers to the process
     process.stdout.on('data', (data) => {
       this.emit('data', data.toString(), false);
@@ -72,7 +66,6 @@ class ProcessManagerBase extends EventEmitter {
       this.emit('data', data.toString(), true);
     });
     process.on('close', (code) => {
-      //clearInterval(this._consoleRefreshTimer);
       this._process = null;
       this.emit('close', code);
     });
