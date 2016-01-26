@@ -6,21 +6,42 @@
   </head>
 
   <body>
+    <style>
+      body {
+        font-family: "Open Sans", "Helvetica", "Arial", "sans-serif";
+      }
+    </style>
+
     <script>
       'use strict';
 
       const ipcRenderer = require('electron').ipcRenderer;
+      window.$ = require('jquery');
 
-      ipcRenderer.on('response', (event, arg) => {
-        console.log(arg);
+      let balance = {};
+
+      ipcRenderer.on('balance', (event, arg) => {
+        balance = arg;
+
+        let balanceAvailable = balance.unlocked_balance;
+        let balanceLocked = balance.balance - balanceAvailable;
+        $("#balanceAvailable").html(balanceAvailable);
+        $("#balanceLocked").html(balanceLocked);
       });
-      ipcRenderer.send('request', 'ping');
     </script>
 
-    <h1>Destination</h1>
+    <div>
+      <h1>Balance</h1>
+      Available: <span id="balanceAvailable">0.000000000000</span><br>
+      Locked: <span id="balanceLocked">0.000000000000</span>
+    </div>
 
-    Address: <input type="text" name="address"><br>
-    Amount: <input type="number" name="amount"><br>
-    <button>Send</button>
+    <div>
+      <h1>Send Monero</h1>
+
+      Address: <input type="text" name="address"><br>
+      Amount: <input type="number" name="amount"><br>
+      <button>Send</button>
+    </div>
   </body>
 </html>

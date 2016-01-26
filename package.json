@@ -8,6 +8,7 @@
     "pack": "npm run compile && electron-packager ./ electron-monero --platform=all --arch=all --version=0.36.2 --out=./build --ignore=./build --prune"
   },
   "dependencies": {
+    "jquery": "^2.2.0",
     "mkdirp": "^0.5.1",
     "monero-nodejs": "^2.0.0",
     "node-localstorage": "^0.6.0",
