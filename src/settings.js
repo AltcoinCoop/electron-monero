@@ -78,7 +78,7 @@ class NetworkSettings {
   }
 
   static get rpcDaemonPort() {
-    return localStorage.getItem('network_rpcDaemonPort') || 18081;
+    return localStorage.getItem('network_rpcDaemonPort') || 24091;
   }
 
   static set rpcDaemonPort(value) {
@@ -94,7 +94,7 @@ class NetworkSettings {
   }
 
   static get rpcWalletPort() {
-    return localStorage.getItem('network_rpcWalletPort') || 18082;
+    return localStorage.getItem('network_rpcWalletPort') || 24092;
   }
 
   static set rpcWalletPort(value) {
